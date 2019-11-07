@@ -132,8 +132,49 @@
 	4. 获取任意请求的key为name的值  input("name")  get和post一起时优先获取post数据
 	5. 判断一个key的值是否存在  input('?name')
 
-
 ## 参数绑定
+## 依赖注入
+
+## 得到json
+	json(....) 
+
+# 视图
+	1. 视图命名规则
+		视图目录/控制器名/方法名+模板后缀
+
+	2. 模板的渲染
+		1. return $this -> fetch('[模板文件]','[模板变量]');
+		2. return view('模块@控制器/控制器动作') 针对自定义路由
+
+	3. 模板赋值
+		1. $this -> assign("xx",变量) 
+		2. return view('模块@控制器/控制器动作',['xx' => 变量,'xx1' => 变量])
+		3. return view('模块@控制器/模板名字',compact('与变量同名不带$符号的名字','与变量同名不带$符号的名字1')) 推荐
+		4. 全局赋值	
+			use think\facade\View    View::share("webname",'网站名称');\
+
+	4. 使用函数
+		1. 需要对模板输出使用函数的时候 可以使用php提供的函数，也可以使用tp提供的，用户在tp中规定的文件中定义的函数
+			语法:{:md5($password)}
+
+	5. 原样输出
+		1. 为了保持js不被tp的模板干扰  
+			{literal} {/literal}
+
+	6. 循环标签
+		{foreach $list as $key =>$vo}  {/foreach}
+
+	7. 条件判断
+		{if ()OR()} {elseif 条件 /} {else /}
+
+	8. 模板继承
+
+
+# 连接数据库
+	config/database.php中配置数据库参数
+		
+	
+	
 	
 		
 		 
