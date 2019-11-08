@@ -266,7 +266,59 @@
 				return strstr($value,$rule)?"不成功":true;
 				})
 
+	2. 验证器 TP5.1之后推荐使用
+		1. 创建验证器
+			php think make:validate 模块名/验证器名(首字母大写)
+
+	3. csrf 验证  其实就是加上一个token 
+		{:token()}
+
+## composer 下载扩展包
+	composer require topthink/think-captcha  tp验证码包
+
 ## TP5的cookie和session
+
+### Cookie操作
+	1. think\facade\Cookie  可以调用静态方法
+	2. 获取 cookie('name')  设置cookie('name','value','3000(时间)');  删除cookie('name',null) 是否存在cookie('?name')
+
+### Session操作
+	1. think\facade\Session   调用静态方法
+	2. 获取 session('name')  设置session('name','value');   删除session('name',null) 
+		是否存在cookie('?name')      获取全部session('');
+	   	清空所有session(null)
+
+## 闪存
+	Session::flash('name','value'); 定义好之后，下一次进行http请求的时候可以拿到，第二次就拿不到了
+
+## 中间件
+	用于拦截和过滤HTTP请求，并进行必要的业务处理
+
+	1. 定义中间件  类似于OkHttp的拦截器?
+		php think make:middleware  中间件名称
+
+		 //pathInfo模式 注册中间件
+		    protected $middleware=[
+		        'CheckLogin:param'
+		    ];
+
+		//路由模式注册中间件
+		#Route::get("login", "@index/Login/index")->name('index/Login/index')->middleware("CheckLogin:param");
+		Route::group(["middleware" => 'CheckLogin:param'/*传值*/], function () {
+		    Route::get("login", "@index/Login/index")->name('login');
+		});
+
+		全局配置中间件
+		application目录中 创建middleware  return [\app\http\middleware\LoginCheck::class]; 支持多个中间件
+
+### 中间件传参
+	 return [[\app\http\middleware\LoginCheck::class,'param']];  
+	 public function handle($request, \Closure $next,$param/*接受值*/)
+    {
+
+        echo '1111';
+        return $next($request);
+    }
 
 		 
 		
