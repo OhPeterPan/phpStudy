@@ -100,7 +100,7 @@
 		方便管理
 
 ### 使用命令行创建分组
-	php think build --module 分组名称
+	php think build --module 分组名称  创建模块
 
 ### 创建控制器
 	1. 手动创建  application/模块目录/controller/xxx  new -> php.class
@@ -172,6 +172,105 @@
 
 # 连接数据库
 	config/database.php中配置数据库参数
+
+	配置数据库相关参数的时候一定要检查mysql和pdo是否开启
+
+## 数据库增删改查
+	1. 查询
+		Db::query("sql语句",[占位数据])
+		ps: 
+		$sql = 'select * from article where id=:id';
+		Db::query($sql,['id' => 24]);
+
+	2. 插入、删除、更新
+		Db::execute('sql语句',[占位数据])
+
+	3. 添加数据Db
+		$data = ['title' => '哈哈哈哈','content' => '文章吧']
+		//table需要加上表前缀 配置文件里配置的那个前缀
+		Db::table('tp_article')->insert($data);
+		//不需要表前缀
+		Db::name('article')->insert($data);
+		//推荐写法，不需要前缀
+		db('article')->insert($data);
+		//获取插入数据的id值
+		$resId = db('article')->insertGetId($data);
+
+	4. 添加多条数据
+		$data = [['title' => '哈哈哈哈','content' => '文章吧'],['title' => '哈哈哈哈','content' => '文章吧']]
+		Db::name('article')->insertAll($data);
+		db('article')->insertAll($data);
+
+	5. 更新数据 一定要写where条件
+		db('article')->where('id',1)->update(['title' => '哈哈哈哈']); //推荐写法
+		db('article')->where('id',1)->data(['title' => '哈哈哈哈'])->update();
+
+	6. 删除数据
+		Db::table('tp_article')->delete(1); //根据id删除
+		Db::table('tp_article')->delete([1,2,4]);//根据id组删除
+
+		Db::table('tp_article')->where->('id',1) -> delete();//根据id组删除
+		Db::table('tp_article')->where->('id','<',10) -> delete();//id <10的删除
+
+		软删除 添加一个删除标记，并不是真正的删除
+
+	7. 查询数据
+		查询一条 
+			Db::name("article")->where('id',2)->find();
+			Db::name("article")->where('id',2)->findOrFail();
+
+		查询多条
+			Db::name("article")->where('id','>','2)->select();
+
+		排序和分页
+			db('article') ->order('id','desc') -> limit(0,2) -> select();
+
+		获取指定字段的值
+			db('article') -> where('id',3) ->value('title');
+
+		获取指定的列
+			db('article') -> column('title');
+			db('article') -> column('title','id'); //以id为键
+
+		获取器
+			db('article') ->withAttr('title',function($val,$data){
+
+			 		 return '你好世界--'.$val;//这里的val就是获取到的title的值 
+
+				}) -> where('id','>','2') -> select(); 获取到指定数据后进行操作
+
+## 模型
+### 模型定义与设置
+	1. 命令行创建model
+		php think make:model 模块/模型(首字母大写)
+
+### model的增删改查 .....还是看文档吧
+	1. 查询单条记录
+		User::where('name','thinkphp') -> find();
+
+	2. 条件分组  where() or ()
+		User::where(function($query){$query->where('id','<=',23)})->whereOr(function($query){$query->where('clcik','<=',23)})->select();
+	
+## TP5的分页功能
+	{$data|raw}  直接出现分页
+
+## TP5的验证码功能 重要
+	1. 独立验证
+		$validate=Validate::make(['name'=>'require|max:25|checkTitle:张三' ,'email' => 'email'],//定义规则
+
+						//规则被触发的时候返回提示语句
+						['name.require'=>'名称必须填写','name.max'=>'名称最多只能25个字','email.email'=>'邮箱不合法']);
+	
+		自定义规则
+			Validate::extend('checkTitle',function($value,$rule){
+				return strstr($value,$rule)?"不成功":true;
+				})
+
+## TP5的cookie和session
+
+		 
+		
+		
 		
 	
 	
